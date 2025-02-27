@@ -14,11 +14,11 @@ class TestTextNode(unittest.TestCase):
     
     def test_url(self):
         node = TextNode("This is a text node", TextType.ITALIC_TEXT, "https://boot.dev")
-        self.assertNotEqual(node.url, None)
+        self.assertIsNotNone(node.url)
     
     def test_nurl(self):
         node = TextNode("This is a text node", TextType.BOLD_TEXT)
-        self.assertEqual(node.url, None)
+        self.assertIsNone(node.url)
 
 
 if __name__ == "__main__":
