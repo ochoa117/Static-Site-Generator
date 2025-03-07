@@ -1,9 +1,9 @@
 class HTMLNode():
     def __init__(self, tag=None, value=None, children=None, props=None):
-        self.tag = tag
-        self.value = value
-        self.children = children
-        self.props = props
+        self.tag = tag # string
+        self.value = value # string
+        self.children = children #list of nodes
+        self.props = props # dictionary
     
     def to_html(self):
         raise NotImplementedError("to_html method not implemented")
