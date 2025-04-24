@@ -4,7 +4,8 @@ from markdown_to_textnode import (
     extract_markdown_images,
     extract_markdown_links,
     split_nodes_image,
-    split_nodes_link
+    split_nodes_link,
+    text_to_textnodes
 )
 from textnode import TextNode, TextType
 
@@ -167,6 +168,24 @@ class TestSplitNodesDelimiter(unittest.TestCase):
                 TextNode(" with text that follows", TextType.NORMAL_TEXT),
             ],
             new_nodes,
+        )
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        new_nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.NORMAL_TEXT),
+                TextNode("text", TextType.BOLD_TEXT),
+                TextNode(" with an ", TextType.NORMAL_TEXT),
+                TextNode("italic", TextType.ITALIC_TEXT),
+                TextNode(" word and a ", TextType.NORMAL_TEXT),
+                TextNode("code block", TextType.CODE_TEXT),
+                TextNode(" and an ", TextType.NORMAL_TEXT),
+                TextNode("obi wan image", TextType.IMAGE_TEXT, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.NORMAL_TEXT),
+                TextNode("link", TextType.LINK_TEXT, "https://boot.dev"),
+            ],
+            new_nodes
         )
 
 if __name__ == "__main__":
