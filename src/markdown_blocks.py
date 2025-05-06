@@ -11,6 +11,13 @@ class BlockType(Enum):
     ULIST = "unordered_list"
     OLIST = "ordered_list"
 
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    if not blocks[0].startswith("# "):
+        raise ValueError("invalid markdown: no header 1")
+    title = blocks[0].lstrip("# ")
+    return title.rstrip(" ")
+
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
     filtered_blocks = []
