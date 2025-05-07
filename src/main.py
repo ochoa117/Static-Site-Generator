@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 def main():
-    basepath = sys.argv[0]
+    basepath = f"{sys.argv[0]}/"
     static_to_docs_copy(
         "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/static",
         "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/docs"
@@ -54,7 +54,7 @@ def generate_path(from_path, template_path, dest_path, basepath):
         temp_content = temp.read()
     file_html = markdown_to_html_node(file_content).to_html()
     file_title = extract_title(file_content)
-    new_temp_content = temp_content.replace("{{ Title }}", file_title).replace("{{ Content }}", file_html).replace('href="/', f'href="{basepath}/').replace('src="/', f'src="{basepath}/')
+    new_temp_content = temp_content.replace("{{ Title }}", file_title).replace("{{ Content }}", file_html).replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
     with open(dest_path, "w") as dest:
