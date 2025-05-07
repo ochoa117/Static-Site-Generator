@@ -2,21 +2,21 @@ from textnode import TextNode, TextType
 from markdown_blocks import markdown_to_html_node, extract_title
 import os, shutil
 from pathlib import Path
+import sys
 
 def main():
-
-    static_to_public_copy(
+    basepath = sys.argv[0]
+    static_to_docs_copy(
         "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/static",
-        "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/public"
+        "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/docs"
     )
 
     generate_pages_recursive(
         "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/content",
         "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/template.html",
-        "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/public"
+        "/home/minavina96/workspace/github.com/ochoa117/Static-Site-Generator/docs",
+        basepath
     )
-
-    
 
 def delete_directory_contents(dir_path):
     for filename in os.listdir(dir_path):
@@ -29,7 +29,7 @@ def delete_directory_contents(dir_path):
         except Exception as e:
             print(f"Failed to delete {file_path}. Reason: {e}")
 
-def static_to_public_copy(src, dst):
+def static_to_docs_copy(src, dst):
     delete_directory_contents(dst)
     for filename in os.listdir(src):
         file_path = os.path.join(src, filename)
@@ -37,13 +37,13 @@ def static_to_public_copy(src, dst):
             if os.path.isdir(file_path):
                 new_dst = os.path.join(dst, os.path.basename(file_path))
                 os.mkdir(new_dst)
-                static_to_public_copy(file_path, new_dst)
+                static_to_docs_copy(file_path, new_dst)
             else:
                 shutil.copy(file_path, dst)
         except Exception as e:
             print(f"Failed to copy {file_path}. Reason: {e}")
     
-def generate_path(from_path, template_path, dest_path):
+def generate_path(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     file_content = ""
     temp_content = ""
@@ -54,21 +54,21 @@ def generate_path(from_path, template_path, dest_path):
         temp_content = temp.read()
     file_html = markdown_to_html_node(file_content).to_html()
     file_title = extract_title(file_content)
-    new_temp_content = temp_content.replace("{{ Title }}", file_title).replace("{{ Content }}", file_html)
+    new_temp_content = temp_content.replace("{{ Title }}", file_title).replace("{{ Content }}", file_html).replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
     with open(dest_path, "w") as dest:
         dest.write(new_temp_content)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     contents = os.listdir(dir_path_content)
     new_dest_file = Path("index.html")
     for content in contents:
         content_path = os.path.join(dir_path_content, content)
         if not os.path.isfile(content_path):
-            generate_pages_recursive(content_path, template_path, os.path.join(dest_dir_path, content))
+            generate_pages_recursive(content_path, template_path, os.path.join(dest_dir_path, content), basepath)
         else:
             new_dest_dir_path = os.path.join(dest_dir_path, new_dest_file)
-            generate_path(content_path, template_path, new_dest_dir_path)
+            generate_path(content_path, template_path, new_dest_dir_path, basepath)
 
 main()
