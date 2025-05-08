@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 def main():
-    basepath = sys.argv[0]
+    basepath = sys.argv[1]
     if basepath == "":
         basepath = "/"
     static_to_docs_copy(
